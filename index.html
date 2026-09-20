@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Video Creator</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 25px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 36px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 220px;
+      padding: 18px;
+      box-sizing: border-box;
+      background: #222;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 12px;
+      font-size: 17px;
+      resize: vertical;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #ff2bb5;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #ff4ac1;
+    }
+
+    .status {
+      margin-top: 25px;
+      padding: 15px;
+      background: #1d1d1d;
+      border-radius: 10px;
+      color: #aaa;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>🎬 AI Video Creator</h1>
+
+    <div class="subtitle">
+      Create realistic character videos from your ideas
+    </div>
+
+    <textarea id="prompt"
+      placeholder="Describe the video you want to create...
+
+Example:
+A realistic young man walking through a busy city street at night. He speaks naturally to the camera. Cinematic lighting, realistic movement, natural facial expressions."></textarea>
+
+    <button onclick="createVideo()">
+      Create Video
+    </button>
+
+    <div class="status" id="status">
+      Ready. Enter your video idea above.
+    </div>
+
+  </div>
+
+  <script>
+    function createVideo() {
+      const prompt = document.getElementById("prompt").value.trim();
+      const status = document.getElementById("status");
+
+      if (!prompt) {
+        status.innerText = "Please enter a video idea first.";
+        return;
+      }
+
+      status.innerText =
+        "Your video request has been received. Video generation will be connected next.";
+    }
+  </script>
+
+</body>
+</html>
