@@ -1,0 +1,9 @@
+{
+  "name": "ai-video-creator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@fal-ai/client": "^1.10.1"
+  }
+}
