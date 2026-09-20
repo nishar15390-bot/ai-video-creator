@@ -1,116 +1,429 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Video Creator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-    }
+    <title>AI Video Creator</title>
 
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 25px;
-    }
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+        }
 
-    h1 {
-      text-align: center;
-      font-size: 36px;
-    }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 25px;
+        }
 
-    .subtitle {
-      text-align: center;
-      color: #aaa;
-      margin-bottom: 30px;
-    }
+        h1 {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
 
-    textarea {
-      width: 100%;
-      height: 220px;
-      padding: 18px;
-      box-sizing: border-box;
-      background: #222;
-      color: white;
-      border: 1px solid #555;
-      border-radius: 12px;
-      font-size: 17px;
-      resize: vertical;
-    }
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 30px;
+            font-size: 17px;
+        }
 
-    button {
-      display: block;
-      width: 100%;
-      margin-top: 20px;
-      padding: 16px;
-      border: none;
-      border-radius: 10px;
-      background: #ff2bb5;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+        textarea {
+            width: 100%;
+            height: 220px;
+            padding: 18px;
+            box-sizing: border-box;
+            background: #222;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 12px;
+            font-size: 17px;
+            resize: vertical;
+        }
 
-    button:hover {
-      background: #ff4ac1;
-    }
+        textarea:focus {
+            outline: none;
+            border-color: #ff2bb5;
+        }
 
-    .status {
-      margin-top: 25px;
-      padding: 15px;
-      background: #1d1d1d;
-      border-radius: 10px;
-      color: #aaa;
-    }
-  </style>
+        button {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            background: #ff2bb5;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #ff4ac1;
+        }
+
+        button:disabled {
+            background: #777;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 25px;
+            padding: 15px;
+            background: #1d1d1d;
+            border-radius: 10px;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        .video-container {
+            margin-top: 25px;
+        }
+
+        video {
+            width: 100%;
+            max-width: 900px;
+            border-radius: 12px;
+            display: block;
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #ff2bb5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
+        .example {
+            margin-top: 15px;
+            color: #888;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            textarea {
+                height: 180px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-  <div class="container">
+    <div class="container">
 
-    <h1>🎬 AI Video Creator</h1>
+        <h1>🎬 AI Video Creator</h1>
 
-    <div class="subtitle">
-      Create realistic character videos from your ideas
+        <div class="subtitle">
+            Create realistic character videos from your ideas
+        </div>
+
+        <textarea
+            id="prompt"
+            placeholder="Describe the video you want to create..."
+        >A realistic young boy walking through an ancient Tamil village, cinematic realistic style, speaking naturally in Tamil.</textarea>
+
+        <div class="example">
+            <strong>Example:</strong><br>
+            A realistic young man walking through a busy city street at night.
+            He speaks naturally to the camera. Cinematic lighting, realistic
+            movement and natural facial expressions.
+        </div>
+
+        <button id="createButton" onclick="createVideo()">
+            Create Video
+        </button>
+
+        <div class="status" id="status">
+            Ready. Enter your video idea above.
+        </div>
+
+        <div class="video-container" id="videoContainer"></div>
+
     </div>
 
-    <textarea id="prompt"
-      placeholder="Describe the video you want to create...
+    <script>
 
-Example:
-A realistic young man walking through a busy city street at night. He speaks naturally to the camera. Cinematic lighting, realistic movement, natural facial expressions."></textarea>
+        async function createVideo() {
 
-    <button onclick="createVideo()">
-      Create Video
-    </button>
+            const promptElement =
+                document.getElementById("prompt");
 
-    <div class="status" id="status">
-      Ready. Enter your video idea above.
-    </div>
+            const statusElement =
+                document.getElementById("status");
 
-  </div>
+            const buttonElement =
+                document.getElementById("createButton");
 
-  <script>
-    function createVideo() {
-      const prompt = document.getElementById("prompt").value.trim();
-      const status = document.getElementById("status");
+            const videoContainer =
+                document.getElementById("videoContainer");
 
-      if (!prompt) {
-        status.innerText = "Please enter a video idea first.";
-        return;
-      }
+            const prompt =
+                promptElement.value.trim();
 
-      status.innerText =
-        "Your video request has been received. Video generation will be connected next.";
-    }
-  </script>
+
+            // Check prompt
+            if (!prompt) {
+
+                statusElement.innerText =
+                    "Please enter a video idea first.";
+
+                return;
+            }
+
+
+            // Clear previous video
+            videoContainer.innerHTML = "";
+
+
+            // Disable button while generating
+            buttonElement.disabled = true;
+
+            buttonElement.innerText =
+                "Generating Video...";
+
+
+            statusElement.innerText =
+                "🎬 Sending your video request to the AI video generator...";
+
+
+            try {
+
+                // Send request to our backend API
+                const response = await fetch(
+                    "/api/generate",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            prompt: prompt
+                        })
+                    }
+                );
+
+
+                // Try to read JSON response
+                let data;
+
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+
+                    throw new Error(
+                        "The server returned an invalid response."
+                    );
+                }
+
+
+                // Check API response
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "The video generation request failed."
+                    );
+                }
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.error ||
+                        "Video generation failed."
+                    );
+                }
+
+
+                // Get video data
+                const video =
+                    data.video;
+
+
+                if (!video) {
+
+                    statusElement.innerText =
+                        "⚠️ The request completed, but no video was returned.";
+
+                    return;
+                }
+
+
+                // fal.ai normally returns a video object
+                // containing a URL.
+                let videoUrl = null;
+
+
+                if (typeof video === "string") {
+
+                    videoUrl = video;
+
+                } else if (video.url) {
+
+                    videoUrl = video.url;
+
+                } else if (video.video && video.video.url) {
+
+                    videoUrl = video.video.url;
+                }
+
+
+                // Make sure we received a URL
+                if (!videoUrl) {
+
+                    console.error(
+                        "Video response:",
+                        video
+                    );
+
+                    throw new Error(
+                        "The video was generated, but the video URL was not found."
+                    );
+                }
+
+
+                // Show success message
+                statusElement.innerHTML = `
+                    <div style="
+                        color:#4ade80;
+                        font-size:18px;
+                        font-weight:bold;
+                    ">
+                        ✅ Video generated successfully!
+                    </div>
+
+                    <div style="
+                        margin-top:8px;
+                        color:#aaa;
+                    ">
+                        Your AI video is ready below.
+                    </div>
+                `;
+
+
+                // Create video player
+                const videoElement =
+                    document.createElement("video");
+
+                videoElement.controls = true;
+                videoElement.playsInline = true;
+                videoElement.src = videoUrl;
+
+                videoElement.style.width = "100%";
+                videoElement.style.maxWidth = "900px";
+                videoElement.style.marginTop = "20px";
+                videoElement.style.borderRadius = "12px";
+                videoElement.style.display = "block";
+
+
+                // Add video to page
+                videoContainer.appendChild(
+                    videoElement
+                );
+
+
+                // Add open/download link
+                const link =
+                    document.createElement("a");
+
+                link.href = videoUrl;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+
+                link.innerText =
+                    "▶ Open Video in New Tab";
+
+                link.className =
+                    "download-link";
+
+
+                videoContainer.appendChild(
+                    link
+                );
+
+
+                // Scroll to video
+                videoContainer.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+
+            } catch (error) {
+
+                console.error(
+                    "Video generation error:",
+                    error
+                );
+
+
+                statusElement.innerHTML = `
+                    <div style="
+                        color:#ff6b6b;
+                        font-size:18px;
+                        font-weight:bold;
+                    ">
+                        ❌ Video generation failed
+                    </div>
+
+                    <div style="
+                        margin-top:8px;
+                        color:#aaa;
+                    ">
+                        ${escapeHtml(error.message)}
+                    </div>
+                `;
+
+            } finally {
+
+                // Enable button again
+                buttonElement.disabled = false;
+
+                buttonElement.innerText =
+                    "Create Video";
+            }
+        }
+
+
+        // Prevent error messages from inserting HTML
+        function escapeHtml(text) {
+
+            const div =
+                document.createElement("div");
+
+            div.textContent = text;
+
+            return div.innerHTML;
+        }
+
+    </script>
 
 </body>
+
 </html>
